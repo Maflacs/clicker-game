@@ -2,7 +2,7 @@ let clickingAreaNode = document.getElementById("clickingArea");
 let learningAreaNode = document.getElementById("learning_container");
 let relationAreaNode = document.getElementById("relation_container")
 let {
-    seconds,
+    sec,
     knowledge,
     knowledgePerClick,
     knowledgePerSec,
@@ -125,7 +125,7 @@ function getInitialState() {
 function administrateTime() {
     let currentTimestamp = new Date().getTime();
     let elapsedTime = Math.floor((currentTimestamp - startTimestamp) / 1000);
-    let rewardSeconds = elapsedTime-sec;
+    let rewardSeconds = elapsedTime - sec;
     if (rewardSeconds > 0) {
         knowledge += knowledgePerSec * rewardSeconds;
         sec = elapsedTime;
