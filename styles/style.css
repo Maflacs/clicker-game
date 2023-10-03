@@ -10,15 +10,136 @@ html {
     box-sizing: inherit;
 }
 
-body {
-    min-width: 1024px;
+.business-table {
+    box-sizing: content-box;
 }
+
+body {
+    min-width: 540px;
+    margin: 18px;
+    background-color: #ffbf69;
+    
+}
+
+h1 {
+    text-align: center;
+    margin: 1em 0;
+}
+
+
 
 .skills-table,
 .business-table {
     margin: 0 20px;
+    background-color: #f8e16c;
+    border-radius: 5%;
+    -webkit-border-radius: 5%;
+    -moz-border-radius: 5%;
+    -ms-border-radius: 5%;
+    -o-border-radius: 5%;
+    padding: 1em;
 }
 
 .main-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.inventory-container {
+    min-width: 540px;
+
+}
+
+.price {
+    width: 15%;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.clicking-area-container {
+    text-align: center;
+}
+
+.xp>img:hover {
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+}
+
+img {
+    cursor: pointer;
+    user-select: none;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+.xp>img {
+    margin: 1em;
+}
+
+td>img {
+    opacity: 75%;
+}
+
+td>img:hover {
+    opacity: 1;
+}
+
+@media screen and (max-width: 1400px) {
+    .main-container {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "xp xp"
+            "perclick persec";
+    }
+
+    section {
+        margin-bottom: 1em;
+    }
+
+    .xp {
+        grid-area: xp;
+    }
+
+
+    .inventory-container.per-click {
+        grid-area: perclick;
+
+    }
+
+    .inventory-container.per-sec {
+        grid-area: persec;
+
+    }
+
+    td:nth-child(2) {
+        width: 14%;
+    }
+    
+}
+
+@media screen and (max-width: 992px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "xp"
+            "perclick"
+            "persec";
+    }
+    .clicking-area-container {
+        margin: 0 auto;
+    }
+
+    section {
+        margin-top: 1em;
+    }
+
+    td:nth-child(2) {
+        width: 15%;
+    }
 }
