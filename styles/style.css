@@ -17,8 +17,11 @@ html {
 body {
     min-width: 540px;
     margin: 18px;
-    background-color: #ffbf69;
-    
+    background-color: #ffbf69;  
+}
+
+p {
+    user-select: none;
 }
 
 h1 {

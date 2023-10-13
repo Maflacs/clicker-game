@@ -1,6 +1,17 @@
 let clickingAreaNode = document.getElementById("clickingArea");
 let learningAreaNode = document.getElementById("learning_container");
-let relationAreaNode = document.getElementById("relation_container")
+let relationAreaNode = document.getElementById("relation_container");
+let timerAreaNode = document.getElementById("timer");
+let knowledgeAreaNode = document.getElementById("knowledge-area");
+
+const CHANGE_TYPE = {
+    LEARNING: 'LEARNING',
+    RELATION: 'RELATION',
+    TIME: 'TIME',
+    KNOWLEDGE: 'KNOWLEDGE',
+    ALL: 'ALL',
+};
+
 let {
     sec,
     knowledge,
@@ -129,32 +140,36 @@ function administrateTime() {
     if (rewardSeconds > 0) {
         knowledge += knowledgePerSec * rewardSeconds;
         sec = elapsedTime;
-        render();
+        render(CHANGE_TYPE.TIME);
     }
 }
 
-function getClickingAreaTemplate() {
+function getTimerAreaTemplate() {
     return `
         <p><strong>${sec} másodperc</strong></p>
-        <img src="./Images/xp.png" alt="klikkelő" data-enable_click="true">
+`;
+};
+
+function getKnowledgeAreaTemplate() {
+    return `
         <p><strong>${knowledge} tudáspont</strong></p>
         <p>${knowledgePerClick} tudáspont / click</p>
         <p>${knowledgePerSec} tudáspont  / sec</p>
 `;
-}
+};
 
-function handleKnowedgeClicked(event) {
+function handleKnowledgeClicked(event) {
     if (event.target.dataset.enable_click === "true") {
         knowledge += knowledgePerClick;
-        render();
+        render(CHANGE_TYPE.KNOWLEDGE);
     }
-}
+};
 
 function formatPrice(price) {
     if (price < 1000) return price;
     let kValue = price / 1000;
     return `${kValue}K`;
-}
+};
 
 function getLearnings(learningList, index) {
     return `
@@ -168,11 +183,11 @@ function getLearnings(learningList, index) {
             <p>ár: ${formatPrice(learningList.price)}</p>
         </td>
         <td>
-            <img src="${learningList.link}" alt="${learningList.learningName}" data-index="${index}">
+            <img draggable="false" src="${learningList.link}" alt="${learningList.learningName}" data-index="${index}">
         </td>
     </tr>
     `;
-}
+};
 
 function handleLearningsClicked(event) {
     const clickIndex = event.target.dataset.index;
@@ -185,9 +200,9 @@ function handleLearningsClicked(event) {
         knowledge -= clickedLearning.price;
         knowledgePerClick += clickedLearning.knowledgePerClickIncrement;
         clickedLearning.amount++;
-        render();
+        render(CHANGE_TYPE.LEARNING);
     }
-}
+};
 
 function getRelations(relations, index) {
     return `
@@ -205,9 +220,9 @@ function getRelations(relations, index) {
         </td>
     </tr>
     `;
-}
+};
 
-function handleRelaionsClicked(event) {
+function handleRelationsClicked(event) {
     const clickIndex = event.target.dataset.index;
     if (typeof clickIndex !== "undefined") {
         let clickedRelation = relations[clickIndex];
@@ -218,15 +233,54 @@ function handleRelaionsClicked(event) {
         knowledge -= clickedRelation.price;
         knowledgePerSec += clickedRelation.knowledgePerSecIncrement;
         clickedRelation.amount++;
-        render();
+        render(CHANGE_TYPE.RELATION);
+    }
+};
+
+function getLearningsTemplate() {
+    let html = '';
+    let i = 0;
+    let hideRemainingLearnings = false;
+    do {
+        let learning = learningList[i];
+        html += getLearnings(learning, i);
+        if (learning.amount === 0) {
+            hideRemainingLearnings = true;
+        }
+        i++;
+    } while (i < learningList.length && !hideRemainingLearnings) {
+        return html;
     }
 }
 
-function render() {
-    clickingAreaNode.innerHTML = getClickingAreaTemplate();
-    document.getElementById("learnings").innerHTML = learningList.map(getLearnings).join("");
-    document.getElementById("relations").innerHTML = relations.map(getRelations).join("");
+function getRelationsTemplate() {
+    let html = '';
+    let i = 0;
+    let hideRemainingRelations = false;
+    do {
+        let relation = relations[i];
+        html += getRelations(relation, i);
+        if (relation.amount === 0) {
+            hideRemainingRelations = true;
+        }
+        i++;
+    } while (i < relations.length && !hideRemainingRelations) {
+        return html;
+    }
 }
+
+function render(changeType = CHANGE_TYPE.ALL) {
+    if ((changeType === CHANGE_TYPE.ALL || changeType === CHANGE_TYPE.TIME)) {
+        timerAreaNode.innerHTML = getTimerAreaTemplate();
+    }
+    if (changeType === CHANGE_TYPE.ALL || changeType === CHANGE_TYPE.LEARNING) {
+        document.getElementById("learnings").innerHTML = getLearningsTemplate();
+    }
+    if (changeType === CHANGE_TYPE.ALL || changeType === CHANGE_TYPE.RELATION) {
+        document.getElementById("relations").innerHTML = getRelationsTemplate();
+    }
+    knowledgeAreaNode.innerHTML = getKnowledgeAreaTemplate();
+};
 
 function initialize() {
     let data = getInitialState();
@@ -235,9 +289,9 @@ function initialize() {
     knowledgePerClick = data.knowledgePerClick;
     knowledgePerSec = data.knowledgePerSec;
 
-    clickingAreaNode.addEventListener('click', handleKnowedgeClicked);
+    clickingAreaNode.addEventListener('click', handleKnowledgeClicked);
     learningAreaNode.addEventListener('click', handleLearningsClicked);
-    relationAreaNode.addEventListener('click', handleRelaionsClicked);
+    relationAreaNode.addEventListener('click', handleRelationsClicked);
     render();
 }
 
